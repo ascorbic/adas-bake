@@ -1,11 +1,9 @@
-require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`
-})
+require('dotenv').config()
 
 const contentfulConfig = {
   spaceId: process.env.CONTENTFUL_SPACE_ID,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-  host: process.env.CONTENTFUL_HOST
+  host: process.env.CONTENTFUL_HOST,
 }
 
 const { spaceId, accessToken } = contentfulConfig
@@ -22,13 +20,33 @@ module.exports = {
   },
   pathPrefix: '/gatsby-contentful-starter',
   plugins: [
-    'gatsby-transformer-remark',
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `@raae/gatsby-remark-oembed`,
+            options: {
+              providers: {
+                exclude: ['Twitter', 'Flickr', 'Instagram', 'Reddit'],
+                settings: {
+                  YouTube: {
+                    maxwidth: 1024,
+                    maxheight: 768,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
     'gatsby-transformer-sharp',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
     {
       resolve: 'gatsby-source-contentful',
       options: contentfulConfig,
-    }
+    },
   ],
 }
